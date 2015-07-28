@@ -60,6 +60,104 @@ public class TestAhoCorasickDoubleArrayTrie extends TestCase
         List<AhoCorasickDoubleArrayTrie<String>.Hit<String>> wordList = acdat.parseText(text);
         System.out.println(wordList);
     }
+
+
+    private AhoCorasickDoubleArrayTrie<String> buildASimpleAhoCorasickDoubleArrayTrieChinese()
+    {
+        // Collect test data set
+        TreeMap<String, String> map = new TreeMap<String, String>();
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader("D:\\project\\github\\AhoCorasickDoubleArrayTrie\\src\\test\\resources\\cn\\dict.txt"));
+            String line ;
+
+            while ((line = reader.readLine())!=null){
+                map.put(line, line);
+            }
+            reader.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+ /*       String[] keyArray = new String[]
+                {       "京东",
+                        "刘强东",
+                        "奶茶",
+                        "迷汗药",
+                        "东京热",
+                        "仓井玛利亚"
+                };
+        for (String key : keyArray)
+        {
+            map.put(key, key);
+        }*/
+        // Build an AhoCorasickDoubleArrayTrie
+        AhoCorasickDoubleArrayTrie<String> acdat = new AhoCorasickDoubleArrayTrie<String>();
+        acdat.build(map);
+        return acdat;
+    }
+
+    private void validateASimpleAhoCorasickDoubleArrayTrieChinese(AhoCorasickDoubleArrayTrie<String> acdat)
+    {
+        // Test it
+        final String text = "仓井玛利亚在中国大行其道,奶茶妹妹在京东见过么兄弟们";
+        int  sum = 1000;
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < sum; i++) {
+            acdat.parseText(Text.TEXT, new AhoCorasickDoubleArrayTrie.IHit<String>()
+            {
+                @Override
+                public void hit(int begin, int end, String value)
+                {
+                    System.out.printf("[%d:%d]=%s\n", begin, end, value);
+                }
+            });
+        }
+        System.out.println("cost time :" + (System.currentTimeMillis() - start) + "ms");
+        System.out.println("cost time :" + (System.currentTimeMillis() - start) * 1000/sum  +  " ns");
+
+
+        acdat.parseText(" taobao ", new AhoCorasickDoubleArrayTrie.IHit<String>()
+        {
+            @Override
+            public void hit(int begin, int end, String value)
+            {
+                System.out.printf("[%d:%d]=%s\n", begin, end, value);
+            }
+        });
+        // Or simply use
+//        List<AhoCorasickDoubleArrayTrie<String>.Hit<String>> wordList = acdat.parseText(text);
+//        System.out.println(wordList);
+
+
+     /*   // Test it
+        final String text1 = "夜空中最亮的星请指引我靠近你";
+        acdat.parseText(text1, new AhoCorasickDoubleArrayTrie.IHit<String>()
+        {
+            @Override
+            public void hit(int begin, int end, String value)
+            {
+                System.out.printf("[%d:%d]=%s\n", begin, end, value);
+                assertEquals(text.substring(begin, end), value);
+            }
+        });
+        // Or simply use
+        List<AhoCorasickDoubleArrayTrie<String>.Hit<String>> wordList1 = acdat.parseText(text1);
+        System.out.println(wordList1);*/
+    }
+
+
+    public void testBuildAndParseSimplyChinese() throws Exception
+    {
+        AhoCorasickDoubleArrayTrie<String> acdat = buildASimpleAhoCorasickDoubleArrayTrieChinese();
+        validateASimpleAhoCorasickDoubleArrayTrieChinese(acdat);
+    }
+
+
     public void testBuildAndParseSimply() throws Exception
     {
         AhoCorasickDoubleArrayTrie<String> acdat = buildASimpleAhoCorasickDoubleArrayTrie();
@@ -82,15 +180,26 @@ public class TestAhoCorasickDoubleArrayTrie extends TestCase
         // Build an AhoCorasickDoubleArrayTrie
         AhoCorasickDoubleArrayTrie<String> acdat = new AhoCorasickDoubleArrayTrie<String>();
         acdat.build(map);
-        // Test it
+
+        List<AhoCorasickDoubleArrayTrie<String>.Hit<String>> wordList =
+                acdat.parseText("我在长江之南的某个小平原上抖抖索索地划拉着一盒火柴，但总是因无力而过度用力，结果不仅弄断了火柴梗子，还让满盒的火柴干戈寥落撒了半地。我只好又从脚下去捡那一地的火柴梗。");
+
+        System.out.println(wordList);
+
+      /*  // Test it
         acdat.parseText(text, new AhoCorasickDoubleArrayTrie.IHit<String>()
         {
             @Override
             public void hit(int begin, int end, String value)
             {
+                System.out.printf("[%d:%d]=%s\n", begin, end, value);
                 assertEquals(text.substring(begin, end), value);
             }
         });
+
+        List<AhoCorasickDoubleArrayTrie<String>.Hit<String>> wordList =  acdat.parseText(text);
+        System.out.println(wordList);*/
+
     }
 
     private String loadText(String path) throws IOException

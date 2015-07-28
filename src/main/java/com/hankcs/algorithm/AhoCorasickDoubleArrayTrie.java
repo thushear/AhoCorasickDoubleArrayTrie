@@ -82,7 +82,7 @@ public class AhoCorasickDoubleArrayTrie<V> implements Serializable
             {
                 for (int hit : hitArray)
                 {
-                    processor.hit(position - l[hit], position, v[hit]);
+                    processor.hit(position - l[hit], position - 1, v[hit]);
                 }
             }
             ++position;
